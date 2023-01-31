@@ -24,9 +24,9 @@ case "$1" in
        # create cephadm user
        # 1. create user if not existing
        if ! getent passwd | grep -q "^cephadm:"; then
-         echo -n "Adding system user cephadm.."
-         adduser --quiet --system --disabled-password --gecos 'cephadm user for mgr/cephadm' --shell /bin/bash cephadm 2>/dev/null || true
-         echo "..done"
+           echo -n "Adding system user cephadm.."
+           adduser --quiet --system --disabled-password --gecos 'cephadm user for mgr/cephadm' --shell /bin/bash cephadm 2>/dev/null || true
+           echo "..done"
        fi
 
        # 2. make sure user is unlocked
@@ -36,9 +36,10 @@ case "$1" in
            usermod -U cephadm
        fi
 
-       # set up (initially empty) .ssh/authorized_keys file
+       # use actual home dir of cephadm user
        _cephadm_home=$(getent passwd | awk -F: '/^cephadm:/ {print $6}')
 
+       # set up (initially empty) .ssh/authorized_keys file
        if ! test -d "${_cephadm_home}/.ssh"; then
            mkdir "${_cephadm_home}/.ssh"
            chown --reference "${_cephadm_home}" "${_cephadm_home}/.ssh"
